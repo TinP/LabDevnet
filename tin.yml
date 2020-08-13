@@ -1,0 +1,43 @@
+---
+
+- name: Show Commands Playbook
+  hosts: [routers]
+  gather_facts: False
+  connection: local
+  tasks:
+  - name: Define Provider
+    set_fact:
+      provider:
+        username: ddth
+        password: ddth1234
+
+  - name: Run 'show output'
+    ios_command:
+      provider: "{{ provider }}"
+      authorize: yes
+      commands: show version
+
+    register: output1
+
+  - debug: var=output1.stdout_lines
+
+  - name: Run 'show inventory'
+    ios_command:
+      provider: "{{ provider }}"
+      authorize: yes
+      commands: show inventory
+
+    register: output1
+
+  - debug: var=output1.stdout_lines
+
+  - name: for idempotency, use full-form commands
+    ios_config:
+      provider: "{{ provider }}"
+      authorize: yes
+      lines:
+
+        - shutdown
+
+      parents: interface GigabitEthernet1/0/13
+...
